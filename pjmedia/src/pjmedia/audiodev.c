@@ -81,6 +81,7 @@ PJ_DEF(pj_status_t) pjmedia_aud_driver_init(unsigned drv_idx,
     pjmedia_aud_driver *drv = &aud_subsys.drv[drv_idx];
     pjmedia_aud_dev_factory *f;
     unsigned i, dev_cnt;
+    int pulse_i;
     pj_status_t status;
 
     if (!refresh && drv->create) {
@@ -123,7 +124,7 @@ PJ_DEF(pj_status_t) pjmedia_aud_driver_init(unsigned drv_idx,
     */
 
     /* Fill in default devices */
-    drv->play_dev_idx = drv->rec_dev_idx =
+    pulse_i = drv->play_dev_idx = drv->rec_dev_idx =
 			drv->dev_idx = PJMEDIA_AUD_INVALID_DEV;
     for (i=0; i<dev_cnt; ++i) {
 	pjmedia_aud_dev_info info;
@@ -140,6 +141,10 @@ PJ_DEF(pj_status_t) pjmedia_aud_driver_init(unsigned drv_idx,
 	    drv->name[sizeof(drv->name)-1] = '\0';
 	}
 
+	if (pulse_i < 0 && 0 == strncmp("pulse", info.name, sizeof("pulse")) && info.output_count && info.input_count) {
+	    /* Set "pulse" device index */
+	    pulse_i = i;
+	}
 	if (drv->play_dev_idx < 0 && info.output_count) {
 	    /* Set default playback device */
 	    drv->play_dev_idx = i;
@@ -155,13 +160,14 @@ PJ_DEF(pj_status_t) pjmedia_aud_driver_init(unsigned drv_idx,
 	    drv->dev_idx = i;
 	}
 
-	if (drv->play_dev_idx >= 0 && drv->rec_dev_idx >= 0 && 
-	    drv->dev_idx >= 0) 
+	if (pulse_i >= 0 && drv->dev_idx >= 0)
 	{
 	    /* Done. */
 	    break;
 	}
     }
+    if (pulse_i >= 0)
+	drv->play_dev_idx = drv->rec_dev_idx = pulse_i;
 
     /* Register the factory */
     drv->f = f;
