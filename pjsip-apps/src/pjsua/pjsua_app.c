@@ -312,8 +312,7 @@ static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id,
 #endif
 
     /* Start ringback */
-    if (call_info.rem_aud_cnt)
-    	ring_start(call_id);
+    ring_start(call_id);
     
     if (app_config.auto_answer > 0) {
 	pjsua_call_setting opt;
