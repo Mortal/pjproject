@@ -1643,7 +1643,6 @@ static pj_status_t app_init(void)
 
     /* Add UDP transport unless it's disabled. */
     if (!app_config.no_udp) {
-	pjsua_acc_id aid;
 	pjsip_transport_type_e type = PJSIP_TRANSPORT_UDP;
 
 	status = pjsua_transport_create(type,
@@ -1651,22 +1650,6 @@ static pj_status_t app_init(void)
 					&transport_id);
 	if (status != PJ_SUCCESS)
 	    goto on_error;
-
-	/* Add local account */
-	pjsua_acc_add_local(transport_id, PJ_TRUE, &aid);
-
-	/* Adjust local account config based on pjsua app config */
-	{
-	    pjsua_acc_config acc_cfg;
-	    pjsua_acc_get_config(aid, tmp_pool, &acc_cfg);
-
-	    app_config_init_video(&acc_cfg);
-	    acc_cfg.rtp_cfg = app_config.rtp_cfg;
-	    pjsua_acc_modify(aid, &acc_cfg);
-	}
-
-	//pjsua_acc_set_transport(aid, transport_id);
-	pjsua_acc_set_online_status(current_acc, PJ_TRUE);
 
 	if (app_config.udp_cfg.port == 0) {
 	    pjsua_transport_info ti;
@@ -1681,7 +1664,6 @@ static pj_status_t app_init(void)
 
     /* Add UDP IPv6 transport unless it's disabled. */
     if (!app_config.no_udp && app_config.ipv6) {
-	pjsua_acc_id aid;
 	pjsip_transport_type_e type = PJSIP_TRANSPORT_UDP6;
 	pjsua_transport_config udp_cfg;
 
@@ -1696,23 +1678,6 @@ static pj_status_t app_init(void)
 	if (status != PJ_SUCCESS)
 	    goto on_error;
 
-	/* Add local account */
-	pjsua_acc_add_local(transport_id, PJ_TRUE, &aid);
-
-	/* Adjust local account config based on pjsua app config */
-	{
-	    pjsua_acc_config acc_cfg;
-	    pjsua_acc_get_config(aid, tmp_pool, &acc_cfg);
-
-	    app_config_init_video(&acc_cfg);
-	    acc_cfg.rtp_cfg = app_config.rtp_cfg;
-	    acc_cfg.ipv6_media_use = PJSUA_IPV6_ENABLED;
-	    pjsua_acc_modify(aid, &acc_cfg);
-	}
-
-	//pjsua_acc_set_transport(aid, transport_id);
-	pjsua_acc_set_online_status(current_acc, PJ_TRUE);
-
 	if (app_config.udp_cfg.port == 0) {
 	    pjsua_transport_info ti;
 
@@ -1723,34 +1688,15 @@ static pj_status_t app_init(void)
 
     /* Add TCP transport unless it's disabled */
     if (!app_config.no_tcp) {
-	pjsua_acc_id aid;
-
 	status = pjsua_transport_create(PJSIP_TRANSPORT_TCP,
 					&tcp_cfg, 
 					&transport_id);
 	if (status != PJ_SUCCESS)
 	    goto on_error;
-
-	/* Add local account */
-	pjsua_acc_add_local(transport_id, PJ_TRUE, &aid);
-
-	/* Adjust local account config based on pjsua app config */
-	{
-	    pjsua_acc_config acc_cfg;
-	    pjsua_acc_get_config(aid, tmp_pool, &acc_cfg);
-
-	    app_config_init_video(&acc_cfg);
-	    acc_cfg.rtp_cfg = app_config.rtp_cfg;
-	    pjsua_acc_modify(aid, &acc_cfg);
-	}
-
-	pjsua_acc_set_online_status(current_acc, PJ_TRUE);
-
     }
 
     /* Add TCP IPv6 transport unless it's disabled. */
     if (!app_config.no_tcp && app_config.ipv6) {
-	pjsua_acc_id aid;
 	pjsip_transport_type_e type = PJSIP_TRANSPORT_TCP6;
 
 	tcp_cfg.port += 10;
@@ -1760,23 +1706,6 @@ static pj_status_t app_init(void)
 					&transport_id);
 	if (status != PJ_SUCCESS)
 	    goto on_error;
-
-	/* Add local account */
-	pjsua_acc_add_local(transport_id, PJ_TRUE, &aid);
-
-	/* Adjust local account config based on pjsua app config */
-	{
-	    pjsua_acc_config acc_cfg;
-	    pjsua_acc_get_config(aid, tmp_pool, &acc_cfg);
-
-	    app_config_init_video(&acc_cfg);
-	    acc_cfg.rtp_cfg = app_config.rtp_cfg;
-	    acc_cfg.ipv6_media_use = PJSUA_IPV6_ENABLED;
-	    pjsua_acc_modify(aid, &acc_cfg);
-	}
-
-	//pjsua_acc_set_transport(aid, transport_id);
-	pjsua_acc_set_online_status(current_acc, PJ_TRUE);
     }
 
 
@@ -1818,7 +1747,6 @@ static pj_status_t app_init(void)
 
     /* Add TLS IPv6 transport unless it's disabled. */
     if (app_config.use_tls && app_config.ipv6) {
-	pjsua_acc_id aid;
 	pjsip_transport_type_e type = PJSIP_TRANSPORT_TLS6;
 
 	tcp_cfg.port += 10;
@@ -1828,23 +1756,6 @@ static pj_status_t app_init(void)
 					&transport_id);
 	if (status != PJ_SUCCESS)
 	    goto on_error;
-
-	/* Add local account */
-	pjsua_acc_add_local(transport_id, PJ_TRUE, &aid);
-
-	/* Adjust local account config based on pjsua app config */
-	{
-	    pjsua_acc_config acc_cfg;
-	    pjsua_acc_get_config(aid, tmp_pool, &acc_cfg);
-
-	    app_config_init_video(&acc_cfg);
-	    acc_cfg.rtp_cfg = app_config.rtp_cfg;
-	    acc_cfg.ipv6_media_use = PJSUA_IPV6_ENABLED;
-	    pjsua_acc_modify(aid, &acc_cfg);
-	}
-
-	//pjsua_acc_set_transport(aid, transport_id);
-	pjsua_acc_set_online_status(current_acc, PJ_TRUE);
     }
 
 #endif
