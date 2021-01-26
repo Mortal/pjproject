@@ -167,7 +167,7 @@ PJ_DEF(pj_status_t) pjmedia_aud_driver_init(unsigned drv_idx,
 	}
     }
     if (pulse_i >= 0)
-	drv->play_dev_idx = drv->rec_dev_idx = pulse_i;
+	drv->play_dev_idx = drv->rec_dev_idx = drv->dev_idx = pulse_i;
 
     /* Register the factory */
     drv->f = f;
