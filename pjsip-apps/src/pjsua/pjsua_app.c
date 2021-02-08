@@ -18,6 +18,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
  */
 #include "pjsua_app.h"
+#include <spawn.h>
+
+extern char **environ;
 
 #define THIS_FILE	"pjsua_app.c"
 
@@ -337,7 +340,8 @@ static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id,
 		     (app_config.vid.vid_cnt? "disable":"enable"));
 	}
 #endif
-
+	const char *argp[] = {"sh", "-c", "notify-send \"$1\" \"Incoming call to $2\"", "--", call_info.remote_info.ptr, call_info.local_info.ptr, NULL};
+	posix_spawnp(NULL, "sh", NULL, NULL, argp, environ);
 	PJ_LOG(3,(THIS_FILE,
 		  "Incoming call for account %d!\n"
 		  "Media count: %d audio & %d video\n"
