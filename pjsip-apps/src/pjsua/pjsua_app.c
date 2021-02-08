@@ -342,13 +342,20 @@ static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id,
 #endif
 	const char *argp[] = {"sh", "-c", "notify-send \"$1\" \"Incoming call to $2\"", "--", call_info.remote_info.ptr, call_info.local_info.ptr, NULL};
 	posix_spawnp(NULL, "sh", NULL, NULL, argp, environ);
+	/* Desktop notifications, Fedora extension to vte3:
+	 * OSC 777 ; notify ; SUMMARY ; BODY ST */
 	PJ_LOG(3,(THIS_FILE,
+		  "\033]777;notify;%.*s;Incoming call to %.*s\033\\"
 		  "Incoming call for account %d!\n"
 		  "Media count: %d audio & %d video\n"
 		  "%s"
 		  "From: %.*s\n"
 		  "To: %.*s\n"
 		  "Press %s to answer or %s to reject call",
+		  (int)call_info.remote_info.slen,
+		  call_info.remote_info.ptr,
+		  (int)call_info.local_info.slen,
+		  call_info.local_info.ptr,
 		  acc_id,
 		  call_info.rem_aud_cnt,
 		  call_info.rem_vid_cnt,
